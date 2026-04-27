@@ -1,0 +1,25 @@
+# -----------------
+# S3AssetStore: Nur Metadaten – Binärdaten liegen in S3/MinIO.
+# 256 KEY-Partitionen: bei 25 Mrd. Einträgen ca. 97 Mio. Zeilen/Partition,
+# vollständig im MySQL-InnoDB-Rahmen. Jede Partition kann auf einen
+# eigenen Tablespace gemappt werden (innodb_file_per_table).
+# -----------------
+:VERSION 1
+
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS `s3assets` (
+  `id`          CHAR(36)     NOT NULL,
+  `name`        VARCHAR(64)  NOT NULL DEFAULT '',
+  `description` VARCHAR(64)  NOT NULL DEFAULT '',
+  `type`        TINYINT      NOT NULL DEFAULT 0,
+  `hash`        CHAR(64)     NOT NULL COMMENT 'SHA-256 hex – Referenz auf S3-Objekt',
+  `create_time` INT          NOT NULL DEFAULT 0,
+  `access_time` INT          NOT NULL DEFAULT 0,
+  `asset_flags` INT          NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  PARTITION BY KEY(id) PARTITIONS 256;
+
+COMMIT;
