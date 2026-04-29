@@ -1,4 +1,4 @@
-# S3Asset
+# OpenSimulator S3Asset
 
 This is an experimental implementation of S3Assets as a feasibility study.
 
